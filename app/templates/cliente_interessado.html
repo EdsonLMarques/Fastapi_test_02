@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página do Cliente Interessado</title>
+    <link rel="stylesheet" href="/app/static/style.css">
+</head>
+<body>
+    <h1>Cliente Interessado</h1>
+    <div id="clienteInteressado">
+        <!-- Os dados do cliente interessado serão exibidos aqui -->
+    </div>
+    <script>
+        const clienteInteressadoDiv = document.getElementById('clienteInteressado');
+        const socket = new WebSocket(`ws://${window.location.host}/ws`);
+
+
+        socket.onopen = () => {
+            console.log('WebSocket conectado com sucesso.');
+        };
+
+
+        socket.onmessage = (event) => {
+            console.log('Mensagem recebida:', event.data);
+            const novoContato = JSON.parse(event.data);
+            adicionarClienteInteressado(novoContato);
+        };
+
+        socket.onerror = (error) => {
+            console.error('Erro na conexão WebSocket:', error);
+        };
+
+        socket.onclose = (event) => {
+            console.log('Conexão WebSocket fechada:', event);
+        };
+
+        function adicionarClienteInteressado(cliente) {
+            console.log(cliente)
+            clienteInteressadoDiv.innerHTML = `
+                <div id="clienteInteressado" class="cliente-card">
+                    <h2>${cliente.nome_completo}</h2>
+                    <div class="info-container">
+                        <p>CPF: ${cliente.cpf}</p>
+                        <p>FGTS: R$ ${cliente.fgts}</p>
+                        <p>Telefone: ${cliente.telefone}</p>
+                        <p>Interesse: ${cliente.interesse ? 'Não' : 'Sim'}</p>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
